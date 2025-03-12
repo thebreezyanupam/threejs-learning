@@ -15,23 +15,32 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+scene.background = new THREE.Color('#000000');
 
 /**
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const flagTexture = textureLoader.load('/textures/flag-french.jpg')
+const flagTexture = textureLoader.load('/textures/nepal.png')
+const texture2 = textureLoader.load('/textures/ac.png')  // Another texture for example
+
+// Create an object to hold the texture in the GUI
+const textures = {
+  currentTexture: flagTexture,
+  texture1: flagTexture,
+  texture2: texture2,
+};
 
 /**
  * Test mesh
  */
 // Geometry
-const geometry = new THREE.PlaneGeometry(1, 1, 32, 32)
+const geometry = new THREE.PlaneGeometry(1.2, 1.2, 64, 64)
 
 const count = geometry.attributes.position.count
 const randoms = new Float32Array(count)
 
-for (let i =0; i< count; i++){
+for (let i = 0; i< count; i++){
     randoms[i] = Math.random()
 }
 
@@ -40,21 +49,27 @@ geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1))
 // Material
 const material = new THREE.ShaderMaterial({
     vertexShader: testVertexShader,
-    fragmentShader:testFragmentShader,
+    fragmentShader: testFragmentShader,
     side:THREE.DoubleSide,
-    // wireframe: true,
-    // transparent: true,
     uniforms:{
-        uFrequency: { value: new THREE.Vector2(10,5) },
+        uFrequency: { value: new THREE.Vector2(5,2) },
         uTime:{ value:0 } ,
         uColor: { value: new THREE.Color('orange') },
-        uTexture: { value: flagTexture }
+        uTexture: { value: textures.currentTexture }
     }
-
 });
 
-gui.add(material.uniforms.uFrequency.value, 'x').min(0).max(20).step(0.01).name('frequencyX')
-gui.add(material.uniforms.uFrequency.value, 'y').min(0).max(20).step(0.01).name('frequencyY')
+gui.add(material.uniforms.uFrequency.value, 'x').min(0).max(10).step(0.01).name('frequencyX')
+gui.add(material.uniforms.uFrequency.value, 'y').min(0).max(10).step(0.01).name('frequencyY')
+
+// Add a GUI control to change the texture
+gui.add(textures, 'currentTexture', {
+  'Flag Texture': textures.texture1,
+  'Another Texture': textures.texture2
+}).name('Texture').onChange((selectedTexture) => {
+    material.uniforms.uTexture.value = selectedTexture;
+    material.needsUpdate = true;  // Update material after texture change
+});
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
@@ -114,7 +129,7 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
-    //update material
+    // Update material
     material.uniforms.uTime.value = elapsedTime
 
     // Update controls
