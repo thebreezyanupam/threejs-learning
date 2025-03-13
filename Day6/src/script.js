@@ -3,9 +3,7 @@ import * as THREE from 'three'
 import GUI from 'lil-gui'
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
+
 
 /**
  * Base
@@ -38,9 +36,6 @@ const material = new THREE.ShaderMaterial({
     uniforms: {
         uTexture: { value: textureImg },
         uTime: { value: 0 },
-        UResolution: { value: new THREE.Vector4() },
-        uvRate1: { value: new THREE.Vector2(1, 1) },
-        uProgress: { value: 0.0 },
         uDistortion: { value: 0 } // Add the uDistortion uniform
     }
 })
@@ -115,7 +110,7 @@ const tick = () => {
 
     // Update the time uniform in the shader
     material.uniforms.uTime.value = elapsedTime
-    
+
 
     // Update controls
     // controls.update()

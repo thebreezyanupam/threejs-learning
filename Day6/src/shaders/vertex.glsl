@@ -232,7 +232,7 @@ vec3 fbm_vec3(vec3 p, float frequency, float offset)
         vec4 modelViewPosition = modelViewMatrix * vec4(finalPosition, 1.);
 
         gl_Position = projectionMatrix * modelViewPosition;
-        gl_PointSize = 1.0;
+        gl_PointSize = 1.5;
        
 
     // varyings
